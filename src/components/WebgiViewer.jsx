@@ -3,7 +3,8 @@ import React, {
  useState,
  useCallback,
  forwardRef,
- useImperativeHandle
+ useImperativeHandle,
+ useEffect
 } from "react";
 
 import {
@@ -26,12 +27,15 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 function WebgiViewer() {
  const canvasRef = useRef(null);
 
- async function setupViewer(){
+  const setupViewer = useCallBack(async () => {
 
     // Initialize the viewer
     const viewer = new ViewerApp({
-        canvas: document.getElementById('webgi-canvas') as HTMLCanvasElement,
+        canvas: canvasRef.current
     })
+
+  //  Add some plugins
+    const manager = await viewer.addPlugin(AssetManagerPlugin)
 
     // Add plugins individually.
     // await viewer.addPlugin(GBufferPlugin)
@@ -50,10 +54,12 @@ function WebgiViewer() {
     // and many more...
 
     // or use this to add all main ones at once.
-    await addBasePlugins(viewer) // check the source: https://codepen.io/repalash/pen/JjLxGmy for the list of plugins added.
+    await addBasePlugins(viewer) 
 
-    // Add a popup(in HTML) with download progress when any asset is downloading.
-    await viewer.addPlugin(AssetManagerBasicPopupPlugin)
+   // This must be called once after all plugins are added
+    viewer.renderer.refreshPipeline()
+    
+    await manager.addFromPath("scene-white.glb")
 
     // Required for downloading files from the UI
     await viewer.addPlugin(FileTransferPlugin)
@@ -67,12 +73,12 @@ function WebgiViewer() {
     // Load an environment map if not set in the glb file
     // await viewer.setEnvironmentMap("./assets/environment.hdr");
 
-    // Add some UI for tweak and testing.
-    const uiPlugin = await viewer.addPlugin(TweakpaneUiPlugin)
-    // Add plugins to the UI to see their settings.
-    uiPlugin.setupPlugins<IViewerPlugin>(TonemapPlugin, CanvasSnipperPlugin)
 
-}
+}, []);
+  
+  useEffect(() => {
+
+  }, [])
 
   return (
     <div id="webgi-canvas-container">
