@@ -59,6 +59,8 @@ function WebgiViewer() {
 
     await manager.addFromPath("scene-black.glb");
 
+    viewer.getPlugin(TonemapPlugin).config.clipBackground = true;
+
     // Add a popup(in HTML) with download progress when any asset is downloading.
     await viewer.addPlugin(AssetManagerBasicPopupPlugin);
 
