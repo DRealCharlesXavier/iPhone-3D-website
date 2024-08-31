@@ -15,8 +15,6 @@ import {
   SSAOPlugin,
   BloomPlugin,
   GammaCorrectionPlugin,
-  addBasePlugins,
-  CanvasSnipperPlugin,
   mobileAndTabletCheck,
 } from "webgi";
 import gsap from "gsap";
@@ -27,33 +25,23 @@ function WebgiViewer() {
   const canvasRef = useRef();
 
   const setupViewer = useCallback(async () => {
-    // Initialize the viewer
     const viewer = new ViewerApp({
       canvas: canvasRef.current,
     });
 
     const manager = await viewer.addPlugin(AssetManagerPlugin);
 
-    // Add plugins individually.
-    // await viewer.addPlugin(GBufferPlugin)
-    // await viewer.addPlugin(new ProgressivePlugin(32))
-    // await viewer.addPlugin(new TonemapPlugin(!viewer.useRgbm))
-    // await viewer.addPlugin(GammaCorrectionPlugin)
-    // await viewer.addPlugin(SSRPlugin)
-    // await viewer.addPlugin(SSAOPlugin)
-    // await viewer.addPlugin(DiamondPlugin)
-    // await viewer.addPlugin(FrameFadePlugin)
-    // await viewer.addPlugin(GLTFAnimationPlugin)
-    // await viewer.addPlugin(GroundPlugin)
-    // await viewer.addPlugin(BloomPlugin)
-    // await viewer.addPlugin(TemporalAAPlugin)
-    // await viewer.addPlugin(AnisotropyPlugin)
-    // and many more...
+    const camera = viewer.scene.activeCamera;
+    const position = camera.position;
+    const target = camera.target;
 
-    // or use this to add all main ones at once.
-    await addBasePlugins(viewer);
-
-    await viewer.addPlugin(CanvasSnipperPlugin);
+    await viewer.addPlugin(GBufferPlugin);
+    await viewer.addPlugin(new ProgressivePlugin(32));
+    await viewer.addPlugin(new TonemapPlugin(true));
+    await viewer.addPlugin(GammaCorrectionPlugin);
+    await viewer.addPlugin(SSRPlugin);
+    await viewer.addPlugin(SSAOPlugin);
+    await viewer.addPlugin(BloomPlugin);
 
     viewer.renderer.refreshPipeline();
 
@@ -61,17 +49,18 @@ function WebgiViewer() {
 
     viewer.getPlugin(TonemapPlugin).config.clipBackground = true;
 
-    // Add a popup(in HTML) with download progress when any asset is downloading.
-    await viewer.addPlugin(AssetManagerBasicPopupPlugin);
+    viewer.scene.activeCamera.setCameraOptions({ controlsEnabled: false });
 
-    // Required for downloading files from the UI
-    await viewer.addPlugin(FileTransferPlugin);
+    window.scrollTo(0, 0);
 
-    // Import and add a GLB file.
-    await viewer.load("./assets/classic-watch.glb");
+    let needsUpdate = true;
 
-    // Load an environment map if not set in the glb file
-    // await viewer.setEnvironmentMap("./assets/environment.hdr");
+    viewer.addEventListener("preFrame", () => {
+      if (needsUpdate) {
+        camera.positionTargetUpdated(true);
+        needsUpdate = false;
+      }
+    });
   }, []);
 
   useEffect(() => {
