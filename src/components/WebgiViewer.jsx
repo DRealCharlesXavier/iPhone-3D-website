@@ -1,6 +1,7 @@
 import React, {
   useRef,
   useState,
+  useEffect,
   useCallback,
   forwardRef,
   useImperativeHandle,
@@ -19,10 +20,19 @@ import {
 } from "webgi";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useEffect } from "react";
+import { scrollAnimation } from "../lib/scroll-animaiton";
+
+gsap.registerPlugin(ScrollTrigger);
 
 function WebgiViewer() {
-  const canvasRef = useRef();
+  const canvasRef = useRef(null);
+
+  const memorizedScrollAnimation = useCallback(position, target, onUpdate) => {
+    if (position && target && onUpdate) {
+      scrollAnimation(position, target, onUpdate);
+
+    }, []
+  };
 
   const setupViewer = useCallback(async () => {
     const viewer = new ViewerApp({
