@@ -267,9 +267,9 @@ nav .link-styled {
 .jumbotron-section .iphone-img {
   margin-right: -400px;
   height: 516px;
-  position: absolute; 
+  position: absolute;
   bottom: 0;
-} 
+}
 
 .mobile-or-tablet .iphone-img {
   display: none;
@@ -328,7 +328,7 @@ nav .link-styled {
   display: flex;
   align-items: center;
   flex-direction: column;
-  /* opacity: 0; */
+  opacity: 0;
 }
 
 .sound-section .title {
