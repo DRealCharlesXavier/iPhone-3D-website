@@ -48,4 +48,39 @@ export const scrollAnimation = (position, target, onUpdate) => {
       immediateRender: false,
     },
   });
+  tl.to(position, {
+    x: 1.56,
+    y: 5.0,
+    z: 0.011,
+    scrollTrigger: {
+      trigger: ".display-section",
+      start: "top bottom",
+      end: "top top",
+      scrub: 2,
+      immediateRender: false,
+    },
+    onUpdate,
+  });
+  tl.to(target, {
+    x: -0.55,
+    y: 0.32,
+    z: 0.0,
+    scrollTrigger: {
+      trigger: ".display-section",
+      start: "top bottom",
+      end: "top top",
+      scrub: 2,
+      immediateRender: false,
+    },
+  });
+  tl.to(".display-section", {
+    opacity: 1,
+    scrollTrigger: {
+      trigger: ".display-section",
+      start: "top bottom",
+      end: "top top",
+      scrub: 2,
+      immediateRender: false,
+    },
+  });
 };
