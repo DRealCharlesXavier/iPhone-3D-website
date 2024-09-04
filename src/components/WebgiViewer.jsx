@@ -32,7 +32,18 @@ const WebgiViewer = forwardRef((props, ref) => {
   const [positionRef, setPositionRef] = useState(null);
 
   useImperativeHandle(ref, () => ({
-    triggerPreview() {},
+    triggerPreview() {
+      gsap.to(positionRef, {
+        x: 13.04,
+        y: -2.01,
+        z: 2.29,
+        duration: 2,
+        onUpdate: () => {
+          viewerRef.setDirty();
+          cameraRef.positionTargetUpdated(true);
+        },
+      });
+    },
   }));
 
   const memorizedScrollAnimation = useCallback((position, target, onUpdate) => {
