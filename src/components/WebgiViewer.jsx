@@ -41,9 +41,11 @@ const WebgiViewer = forwardRef((props, ref) => {
         onUpdate: () => {
           viewerRef.setDirty();
           cameraRef.positionTargetUpdated(true);
-        },
+        }
       });
-    },
+
+      gsap.to(targetRef, { x: 0.11, y: 0.0, z: 0.0, duration: 2 })
+    }
   }));
 
   const memorizedScrollAnimation = useCallback((position, target, onUpdate) => {
@@ -57,11 +59,17 @@ const WebgiViewer = forwardRef((props, ref) => {
       canvas: canvasRef.current,
     });
 
+    setViewerRef(viewer);
+
     const manager = await viewer.addPlugin(AssetManagerPlugin);
 
     const camera = viewer.scene.activeCamera;
     const position = camera.position;
     const target = camera.target;
+
+    setCameraRef(camera);
+    setPositionRef(position);
+    setTargetRef(target);
 
     await viewer.addPlugin(GBufferPlugin);
     await viewer.addPlugin(new ProgressivePlugin(32));
